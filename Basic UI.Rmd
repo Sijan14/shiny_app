@@ -1,0 +1,199 @@
+---
+title: "Basic UI"
+author: "Allama Ikbal Sijan"
+runtime: shiny
+date: "2024-11-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Input Functions
+
+All the example codes goes within the `fluidpage()` function
+
+### 2.1.1 Free Text Input
+
+```{r, eval=FALSE}
+textInput("name", "What's your name?"),
+passwordInput("password", "What's your password?"),
+textAreaInput("story", "Tell me about yourself", rows = 3)
+```
+
+### 2.1.2 Numeric Inputs
+```{r, eval=FALSE}
+numericInput("num", "Number one", value = 0, min = 0, max = 100),
+sliderInput("num2", "Number two", value = 50, min = 0, max = 100),
+sliderInput("rng", "Range", value = c(10, 20), min = 0, max = 100)
+```
+
+### 2.1.3 Dates
+```{r, eval=FALSE}
+dateInput("dob", "When were you born?"),
+dateRangeInput("holiday", "When do you want to go on vacation next?")
+```
+
+### 2.1.4 Limited Choices
+```{r, eval=FALSE}
+selectInput("state", "What's your favourite state?", state.name),
+radioButtons("animal", "What's your favourite animal?", animals),
+radioButtons("rb", "Choose one:",
+    choiceNames = list(
+      icon("angry"),
+      icon("smile"),
+      icon("sad-tear")
+    ),
+    choiceValues = list("angry", "happy", "sad")
+  ),
+selectInput(
+    "state", "What's your favourite state?", state.name,
+    multiple = TRUE
+  ),
+checkboxGroupInput("animal", "What animals do you like?", animals),
+checkboxInput("cleanup", "Clean up?", value = TRUE),
+checkboxInput("shutdown", "Shutdown?")
+```
+
+### 2.1.5 File Upload
+```{r, eval=FALSE}
+fileInput("upload", NULL)
+```
+
+### 2.1.6 Action Button
+```{r, eval=FALSE}
+actionButton("click", "Click me!"),
+actionButton("drink", "Drink me!", icon = icon("cocktail"))
+
+fluidRow(
+    actionButton("click", "Click me!", class = "btn-danger"),
+    actionButton("drink", "Drink me!", class = "btn-lg btn-success")
+  ),
+  fluidRow(
+    actionButton("eat", "Eat me!", class = "btn-block")
+  )
+```
+
+### Exercise 1
+
+When space is at a premium, it’s useful to label text boxes using a placeholder that appears inside the text entry area. How do you call textInput() to generate the UI below?
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  textInput("name", "Name", placeholder = "Your name"),
+  textOutput("greet")
+)
+
+server <- function(input, output, session){
+  output$greet <- renderText({
+    paste0("Hello ", input$name)
+    })
+}
+
+shinyApp(ui, server)
+```
+
+### Exercise 2
+
+Carefully read the documentation for sliderInput() to figure out how to create a date slider, as shown below.
+
+```{r}
+ui <- fluidPage(
+  sliderInput("date", "When should we deliver?", 
+              min = as.Date("2020-09-16"),
+              max = as.Date("2020-09-23"),
+              value = as.Date("2020-09-17"),
+              timeFormat = "%F")
+)
+
+server <- function(input, output, session){}
+
+shinyApp(ui, server)
+```
+
+### Exercise 3
+
+Create a slider input to select values between 0 and 100 where the interval between each selectable value on the slider is 5. Then, add animation to the input widget so when the user presses play the input widget scrolls through the range automatically.
+
+```{r}
+ui <- fluidPage(
+  sliderInput("num", "Select a number", min = 0, max = 100, value = 50, step = 5, 
+              animate = TRUE)
+)
+server <- function(input, output, session){}
+
+shinyApp(ui, server)
+```
+
+### Exercise 4
+
+If you have a moderately long list in a selectInput(), it’s useful to create sub-headings that break the list up into pieces. Read the documentation to figure out how. (Hint: the underlying HTML is called <optgroup>.)
+
+```{r}
+ui <- fluidPage(
+  selectInput("state", "State:",
+                  choices = list(`East Coast` = c("NY", "NJ", "CT"),
+                                 `West Coast` = c("WA", "OR", "CA"),
+                                 `Midwest` = c("MN", "WI", "IA"))),
+  textOutput("result")
+)
+server <- function(input, output, session){
+  output$result <- renderText({
+    paste("You chose", input$state)
+  })
+}
+
+shinyApp(ui, server)
+```
+
+# Output Functions
+
+### 2.2.1 Text
+```{r, eval=FALSE}
+ui <- fluidPage(
+  textOutput("text"),
+  verbatimTextOutput("code")
+)
+
+server <- function(input, output, session) {
+  output$text <- renderText("Hello friend!")
+  output$code <- renderPrint(summary(1:10))
+}
+```
+
+### 2.2.2 Tables
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  tableOutput("static"),
+  dataTableOutput("dynamic")
+)
+
+server <- function(input, output, session){
+  output$static <- renderTable(head(mtcars))
+  output$dynamic <- renderDataTable(mtcars, options = list(pagelength = 10))
+}
+shinyApp(ui, server)
+```
+
+### 2.2.3 Plots
+`plotOutput()` has a number of arguments like `click`, `dblclick`, and `hover`
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  plotOutput("plot", width = "400px")
+)
+
+server <- function(input, output, session){
+  output$plot <- renderPlot(plot(1:10), res = 96)
+}
+
+shinyApp(ui, server)
+```
+
+
+
+
