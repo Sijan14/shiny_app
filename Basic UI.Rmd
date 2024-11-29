@@ -3,7 +3,7 @@ title: "Basic UI"
 author: "Allama Ikbal Sijan"
 runtime: shiny
 date: "2024-11-29"
-output: html_document
+output: bookdown::html_document2
 ---
 
 ```{r setup, include=FALSE}
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 All the example codes goes within the `fluidpage()` function
 
-### 2.1.1 Free Text Input
+### Free Text Input
 
 ```{r, eval=FALSE}
 textInput("name", "What's your name?"),
@@ -21,20 +21,20 @@ passwordInput("password", "What's your password?"),
 textAreaInput("story", "Tell me about yourself", rows = 3)
 ```
 
-### 2.1.2 Numeric Inputs
+### Numeric Inputs
 ```{r, eval=FALSE}
 numericInput("num", "Number one", value = 0, min = 0, max = 100),
 sliderInput("num2", "Number two", value = 50, min = 0, max = 100),
 sliderInput("rng", "Range", value = c(10, 20), min = 0, max = 100)
 ```
 
-### 2.1.3 Dates
+### Dates
 ```{r, eval=FALSE}
 dateInput("dob", "When were you born?"),
 dateRangeInput("holiday", "When do you want to go on vacation next?")
 ```
 
-### 2.1.4 Limited Choices
+### Limited Choices
 ```{r, eval=FALSE}
 selectInput("state", "What's your favourite state?", state.name),
 radioButtons("animal", "What's your favourite animal?", animals),
@@ -55,12 +55,12 @@ checkboxInput("cleanup", "Clean up?", value = TRUE),
 checkboxInput("shutdown", "Shutdown?")
 ```
 
-### 2.1.5 File Upload
+### File Upload
 ```{r, eval=FALSE}
 fileInput("upload", NULL)
 ```
 
-### 2.1.6 Action Button
+### Action Button
 ```{r, eval=FALSE}
 actionButton("click", "Click me!"),
 actionButton("drink", "Drink me!", icon = icon("cocktail"))
@@ -74,7 +74,8 @@ fluidRow(
   )
 ```
 
-### Exercise 1
+## Input Exercise 
+### Exercise 
 
 When space is at a premium, it’s useful to label text boxes using a placeholder that appears inside the text entry area. How do you call textInput() to generate the UI below?
 ```{r}
@@ -94,7 +95,7 @@ server <- function(input, output, session){
 shinyApp(ui, server)
 ```
 
-### Exercise 2
+### Exercise
 
 Carefully read the documentation for sliderInput() to figure out how to create a date slider, as shown below.
 
@@ -112,7 +113,7 @@ server <- function(input, output, session){}
 shinyApp(ui, server)
 ```
 
-### Exercise 3
+### Exercise
 
 Create a slider input to select values between 0 and 100 where the interval between each selectable value on the slider is 5. Then, add animation to the input widget so when the user presses play the input widget scrolls through the range automatically.
 
@@ -126,7 +127,7 @@ server <- function(input, output, session){}
 shinyApp(ui, server)
 ```
 
-### Exercise 4
+### Exercise
 
 If you have a moderately long list in a selectInput(), it’s useful to create sub-headings that break the list up into pieces. Read the documentation to figure out how. (Hint: the underlying HTML is called <optgroup>.)
 
@@ -149,7 +150,7 @@ shinyApp(ui, server)
 
 # Output Functions
 
-### 2.2.1 Text
+### Text
 ```{r, eval=FALSE}
 ui <- fluidPage(
   textOutput("text"),
@@ -162,7 +163,7 @@ server <- function(input, output, session) {
 }
 ```
 
-### 2.2.2 Tables
+### Tables
 ```{r}
 library(shiny)
 
@@ -178,8 +179,8 @@ server <- function(input, output, session){
 shinyApp(ui, server)
 ```
 
-### 2.2.3 Plots
-`plotOutput()` has a number of arguments like `click`, `dblclick`, and `hover`
+### Plots {#plots}
+`plotOutput()` has a number of arguments like `click`, `dblclick`, and `hover`. `click = "plot_click"`, they’ll create a reactive input (`input$plot_click`)
 ```{r}
 library(shiny)
 
@@ -192,6 +193,55 @@ server <- function(input, output, session){
 }
 
 shinyApp(ui, server)
+```
+### Downloads
+```{r, eval=FALSE}
+downloadButton()
+downloadLink()
+```
+
+## Output Exercise
+
+### Exercise
+
+Re-create the Shiny app from Section \@ref(plots) this time setting height to 300px and width to 700px. Set the plot “alt” text so that a visually impaired user can tell that its a scatterplot of five random numbers.
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  plotOutput("plot", width = "700px", height = "300px")
+)
+
+server <- function(input, output, session){
+  output$plot <- renderPlot({
+    plot(1:5)}, res = 96)
+}
+shinyApp(ui, server)
+```
+
+### Exercise
+Update the options in the call to renderDataTable() below so that the data is displayed, but all other controls are suppressed (i.e., remove the search, ordering, and filtering commands). You’ll need to read ?renderDataTable and review the options at https://datatables.net/reference/option/.
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  dataTableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderDataTable(mtcars, 
+                                  options = list(
+                                    searching = FALSE, ordering = FALSE, paging = FALSE))
+}
+shinyApp(ui, server)
+```
+
+### Exercise
+Alternatively, read up on reactable, and convert the above app to use it instead.
+```{r}
+
 ```
 
 
