@@ -240,8 +240,21 @@ shinyApp(ui, server)
 
 ### Exercise
 Alternatively, read up on reactable, and convert the above app to use it instead.
-```{r}
+```{r, warning=FALSE}
+#install.packages("reactable")
+library(reactable)
+library(shiny)
 
+ui <- fluidPage(
+  reactableOutput("table")
+)
+
+server <- function(input, output, session) {
+  output$table <- renderReactable(
+    reactable(mtcars, searchable = FALSE, defaultPageSize = 5)
+  )
+}
+shinyApp(ui, server)
 ```
 
 
