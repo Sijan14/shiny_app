@@ -1,0 +1,10 @@
+name: t-test_two_app
+title:
+username: sijan1
+account: sijan1
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13761623
+bundleId: 9673939
+url: https://sijan1.shinyapps.io/t-test_two_app/
+version: 1
