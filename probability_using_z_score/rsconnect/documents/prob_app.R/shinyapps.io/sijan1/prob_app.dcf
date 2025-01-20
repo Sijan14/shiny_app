@@ -5,6 +5,6 @@ account: sijan1
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 13671716
-bundleId: 9612978
+bundleId: 9674177
 url: https://sijan1.shinyapps.io/prob_app/
 version: 1

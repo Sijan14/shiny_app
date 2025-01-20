@@ -13,7 +13,7 @@ library(bslib)
 
 # UI
 ui <- fluidPage(
-  theme = bslib::bs_theme(bootswatch = "minty"),
+  theme = bslib::bs_theme(bootswatch = "lumen"),
   
   titlePanel("Calculating Probability Using Z-scores"),
   
@@ -62,7 +62,9 @@ server <- function(input, output) {
         labs(title = "Standard Normal Distribution",
              x = "Z-Score",
              y = "Density") +
-        theme_minimal()
+        theme_classic() +
+        theme(panel.grid.major = element_line(color = "lightgray", size = 0.2),
+              panel.grid.minor = element_line(color = "lightgray", size = 0.1)) # Removed panel.border
     })
   })
 }

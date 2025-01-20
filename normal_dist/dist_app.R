@@ -3,51 +3,30 @@ library(shiny)
 library(ggplot2)
 library(tidyverse)
 
-# Define UI for application that draws a histogram
+# Define UI for application
 ui <- fluidPage(
-  # Add a theme
   theme = bslib::bs_theme(bootswatch = "united"),
-    
-  # Application title
-    titlePanel("Histogram of distribution"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("mean",
-                        "Input the mean: ",
-                        min = 0,
-                        max = 50,
-                        value = 0),
-            sliderInput("sd",
-                        "Input the standard deviation: ",
-                        min = 0,
-                        max = 30,
-                        value = 10),
-            
-            h6("Operations are applied to each value:"),
-            numericInput("add",
-                         "Add constant: ",
-                         value = 0),
-            numericInput("sub",
-                         "Subtract constant: ",
-                         value = 0),
-            numericInput("mul",
-                         "Multiply constant: ",
-                         value = 1),
-            numericInput("div",
-                         "Divide by contant: ",
-                         value = 1)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot"),
-           p("\n"),
-           textOutput("summary_mean"),
-           textOutput("summary_sd")
-        )
+  titlePanel("Histogram of distribution"),
+  sidebarLayout(
+    sidebarPanel(
+      wellPanel(
+        sliderInput("mean", "Input the mean: ", min = 0, max = 50, value = 0),
+        sliderInput("sd", "Input the standard deviation: ", min = 0, max = 30, value = 10)
+      ),
+      tags$br(),
+      wellPanel(
+        h4("Transform"), # Added h2 for better visual separation
+        numericInput("add", "Add/Subtract: ", value = 0),
+        numericInput("mul", "Multiply/Divide", value = 1, step = 0.10)
+      )
+    ),
+    mainPanel(
+      plotOutput("distPlot"),
+      p("\n"),
+      textOutput("summary_mean"),
+      textOutput("summary_sd")
     )
+  )
 )
 x1 <- reactive(rnorm(input$n1, input$mean1, input$sd1))
 x2 <- reactive(rnorm(input$n2, input$mean2, input$sd2))
@@ -65,9 +44,7 @@ server <- function(input, output) {
   transformed_df <- reactive({
     data <- df()  # Get the original df
     data$value <- data$value + input$add
-    data$value <- data$value - input$sub
     data$value <- data$value * input$mul
-    data$value <- data$value / input$div
     data
   })
   
@@ -83,9 +60,9 @@ server <- function(input, output) {
       geom_vline(aes(xintercept = mean_val()), color = "blue", linetype = "dashed", size = 1) +  # Mean line
       geom_vline(aes(xintercept = mean_val() + sd_val()), color = "red", linetype = "dashed", size = 1) +  # SD line (+1 SD)
       geom_vline(aes(xintercept = mean_val() - sd_val()), color = "red", linetype = "dashed", size = 1) +  # SD line (-1 SD)
-      annotate("text", x = mean_val() + 3, y = 100, label = paste("Mean"), color = "blue") +  # Mean text
-      annotate("text", x = mean_val() + sd_val() + 3, y = 100, label = paste("+1 SD"), color = "red") +  # +1 SD text
-      annotate("text", x = mean_val() - sd_val() + 3, y = 100, label = paste("-1 SD"), color = "red") +  # -1 SD text
+      annotate("text", x = mean_val() + 4, y = 100, label = paste("Mean"), color = "blue") +  # Mean text
+      annotate("text", x = mean_val() + sd_val() + 4, y = 100, label = paste("+1 SD"), color = "red") +  # +1 SD text
+      annotate("text", x = mean_val() - sd_val() + 4, y = 100, label = paste("-1 SD"), color = "red") +  # -1 SD text
       xlim(-50, 50) + 
       ylim(0, 100) + 
       labs(
@@ -98,10 +75,10 @@ server <- function(input, output) {
   
   # Output new mean and sd
   output$summary_mean <- renderText({
-    paste("New mean: ", round(mean_val()))
+    paste("New Mean: ", round(mean_val()))
   })
   output$summary_sd <- renderText({
-    paste("New sd: ", round(sd_val()))
+    paste("New SD: ", round(sd_val()))
   })
 }
 
